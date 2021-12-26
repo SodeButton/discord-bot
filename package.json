@@ -1,0 +1,24 @@
+{
+  "dependencies": {
+    "discord.js": "^13.4.0",
+    "dotenv": "^10.0.0"
+  },
+  "name": "discord-bot",
+  "version": "1.0.0",
+  "main": "app.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SodeButton/discord-bot.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SodeButton/discord-bot/issues"
+  },
+  "homepage": "https://github.com/SodeButton/discord-bot#readme",
+  "description": ""
+}
