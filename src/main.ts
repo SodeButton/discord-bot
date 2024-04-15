@@ -1,6 +1,7 @@
 //必要なパッケージをインポートする
 import { Client, GatewayIntentBits, Partials, Message } from 'discord.js';
 import dotenv from 'dotenv';
+import http from 'http';
 
 //.envファイルを読み込む
 dotenv.config();
@@ -36,3 +37,6 @@ client.on('messageCreate', async (message: Message) => {
 
 //ボット作成時のトークンでDiscordと接続
 client.login(process.env.TOKEN).then();
+
+const server = http.createServer((request, response) => {
+}).listen(3000);
