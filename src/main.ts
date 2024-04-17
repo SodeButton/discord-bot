@@ -1,7 +1,8 @@
 //必要なパッケージをインポートする
-import { Client, GatewayIntentBits, Partials, Message } from 'discord.js';
+import { GatewayIntentBits, Partials, Message } from 'discord.js';
+import Client from './client';
 import dotenv from 'dotenv';
-import http from 'http';
+import * as fs from "fs";
 
 //.envファイルを読み込む
 dotenv.config();
@@ -18,12 +19,21 @@ const client = new Client({
 	partials: [Partials.Message, Partials.Channel],
 });
 
-//Botがきちんと起動したか確認
-client.once('ready', () => {
-	console.log('Ready!');
-	if (client.user) {
-		console.log(client.user.tag);
-	}
+// Event handler
+fs.readdirSync(`${__dirname}/events`).forEach(file => {
+	client.on(file.split(".")[0], async (...args) => {
+		await import(`./events/${file}`).then((event) => event.default(client, ...args));
+	});
+});
+
+// Setting commands
+fs.readdirSync( `${__dirname}/commands`).forEach(folder => {
+	fs.readdirSync(`${__dirname}/commands/${folder}`).forEach(async file => {
+		const command = await import(`./commands/${folder}/${file}`);
+		if (!command?.default || !command?.default?.data?.name) return;
+		client.commands.set(command.default.data.name, command.default);
+		console.log(command);
+	});
 });
 
 //!timeと入力すると現在時刻を返信するように
@@ -37,6 +47,3 @@ client.on('messageCreate', async (message: Message) => {
 
 //ボット作成時のトークンでDiscordと接続
 client.login(process.env.TOKEN).then();
-
-const server = http.createServer((request, response) => {
-}).listen(3000);

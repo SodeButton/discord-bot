@@ -6,7 +6,8 @@
   "scripts": {
     "test": "ts-node src/main.ts",
     "start": "node build/main.js",
-    "build": "tsc -p ."
+    "build": "tsc -p .",
+    "renderSetup": "npm install & npm run build & npm run start"
   },
   "repository": {
     "type": "git",
