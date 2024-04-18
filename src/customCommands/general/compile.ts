@@ -132,16 +132,6 @@ export default {
                   value: '`' + supportedLanguage[sourceCode[1]].name + '`',
                 },
                 {
-                  name: 'Time',
-                  value: '`' + resultTime + ' s`',
-                  inline: true,
-                },
-                {
-                  name: 'Memory',
-                  value: '`' + Number(resultMemory) / 1000000 + ' MB`',
-                  inline: true,
-                },
-                {
                   name: 'Error Message',
                   value: stderr,
                 },
