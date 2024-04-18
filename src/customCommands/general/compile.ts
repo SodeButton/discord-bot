@@ -52,12 +52,9 @@ export default {
       }
     }
 
-    console.log(postData.json);
-
     axios.post(postData.url, postData.json, {
       headers: postData.headers
     }).then(async (response1) => {
-      console.log(response1.data);
       let isCompleted = false;
       while(!isCompleted) {
         axios.get("https://api.paiza.io/runners/get_status", {
@@ -66,7 +63,6 @@ export default {
             api_key: 'guest'
           }
         }).then((response2) => {
-          console.log(response2.data);
           if (response2.data.status === 'completed') {
             isCompleted = true;
           }
@@ -82,10 +78,10 @@ export default {
       }).then(async (response3) => {
         console.log(response3.data);
         const dataURL = `https://api.paiza.io/runners/get_details?id=${response1.data.id}&api_key=guest`;
-        let resultTime = response3.data['result_time'];
-        let resultMemory = response3.data['result_memory'];
-        if (resultTime === null) resultTime = response3.data['time'];
-        if (resultMemory === null) resultMemory = response3.data['memory'];
+        // const buildTime = response3.data['build_time'];
+        // const buildMemory = response3.data['build_memory'];
+        const resultTime = response3.data['time'];
+        const resultMemory = response3.data['memory'];
 
         if (response3.data['result'] === 'success') {
 
