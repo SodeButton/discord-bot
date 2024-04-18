@@ -1,20 +1,15 @@
-//必要なパッケージをインポートする
-import { GatewayIntentBits, Partials, Message } from 'discord.js';
+import { GatewayIntentBits, Partials, Message, Events } from 'discord.js';
 import Client from './client';
 import dotenv from 'dotenv';
 import * as fs from "fs";
-import express from 'express';
+import axios from 'axios';
+import './webServer';
+import { CustomCommand } from './interfaces';
 
-const app = express();
-app.listen(3000, () => {
-	console.log("Server is running!");
-});
+const createPoint = 'https://api.paiza.io/runners/create';
+const getStatusPoint = 'https://api.paiza.io/runners/get_status';
+const getDetailsPoint = 'https://api.paiza.io/runners/get_details';
 
-app.get("/", (req, res) => {
-	res.send("Hello World!");
-});
-
-//.envファイルを読み込む
 dotenv.config();
 
 //Botで使うGatewayIntents、partials
@@ -42,17 +37,27 @@ fs.readdirSync( `${__dirname}/commands`).forEach(folder => {
 		const command = await import(`./commands/${folder}/${file}`);
 		if (!command?.default || !command?.default?.data?.name) return;
 		client.commands.set(command.default.data.name, command.default);
-		console.log(command);
+	});
+});
+
+fs.readdirSync(`${__dirname}/customCommands`).forEach(folder => {
+	fs.readdirSync(`${__dirname}/customCommands/${folder}`).forEach(async file => {
+		const commandDefault = await import(`./customCommands/${folder}/${file}`);
+		const command = commandDefault.default as CustomCommand;
+
+		if (!command || !command?.data?.name) return;
+		client.on(Events.MessageCreate, async (message: Message) => {
+			if (message.author.bot) return;
+			if (message.content.startsWith(`!${command.data.name}`)) {
+				command.execute(message);
+			}
+		});
 	});
 });
 
 //!timeと入力すると現在時刻を返信するように
 client.on('messageCreate', async (message: Message) => {
 	if (message.author.bot) return;
-	if (message.content === '!time') {
-		const date1 = new Date();
-		message.channel.send(date1.toLocaleString());
-	}
 });
 
 //ボット作成時のトークンでDiscordと接続
