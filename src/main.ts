@@ -1,4 +1,5 @@
 import { GatewayIntentBits, Partials, Message, Events } from 'discord.js';
+import { REST, Routes } from "discord.js";
 import Client from './client';
 import dotenv from 'dotenv';
 import * as fs from "fs";
@@ -26,14 +27,30 @@ fs.readdirSync(`${__dirname}/events`).forEach(file => {
 });
 
 // Setting commands
+const commands: any[] = [];
 fs.readdirSync( `${__dirname}/commands`).forEach(folder => {
 	fs.readdirSync(`${__dirname}/commands/${folder}`).forEach(async file => {
 		const command = await import(`./commands/${folder}/${file}`);
 		if (!command?.default || !command?.default?.data?.name) return;
 		console.log(command);
-		client.commands.set(command.default.data.name, command.default);
+		commands.push(command);
+		// client.commands.set(command.default.data.name, command.default);
 	});
 });
+
+const rest = new REST({ version: '10' }).setToken(process.env.TOKEN as string);
+(async () => {
+	try {
+		console.log('Started refreshing application (/) commands.');
+		await rest.put(
+			Routes.applicationCommands(process.env.CLIENT_ID ?? ''),
+			{ body: commands },
+		);
+		console.log('Successfully reloaded application (/) commands.');
+	} catch (error) {
+		console.error(error);
+	}
+})();
 
 fs.readdirSync(`${__dirname}/customCommands`).forEach(folder => {
 	fs.readdirSync(`${__dirname}/customCommands/${folder}`).forEach(async file => {
