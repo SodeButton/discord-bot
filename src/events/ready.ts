@@ -1,4 +1,5 @@
 import Client from '../client';
+import { ActivityType } from "discord.js";
 
 export default (client: Client) => {
   console.log(`${client.user?.username} ログインしました！`);
@@ -7,7 +8,9 @@ export default (client: Client) => {
 
   setInterval(() => {
     client.user?.setActivity({
-      name: `${client.ws.ping}ms`
+      type: ActivityType.Custom,
+      name: 'customStatus',
+      state: 'ping: ' + client.ws.ping + 'ms',
     });
   }, 10000);
 }
