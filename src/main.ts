@@ -2,14 +2,8 @@ import { GatewayIntentBits, Partials, Message, Events } from 'discord.js';
 import Client from './client';
 import dotenv from 'dotenv';
 import * as fs from "fs";
-import axios from 'axios';
 import './webServer';
 import { CustomCommand } from './interfaces';
-
-const createPoint = 'https://api.paiza.io/runners/create';
-const getStatusPoint = 'https://api.paiza.io/runners/get_status';
-const getDetailsPoint = 'https://api.paiza.io/runners/get_details';
-
 dotenv.config();
 
 //Botで使うGatewayIntents、partials
@@ -36,6 +30,7 @@ fs.readdirSync( `${__dirname}/commands`).forEach(folder => {
 	fs.readdirSync(`${__dirname}/commands/${folder}`).forEach(async file => {
 		const command = await import(`./commands/${folder}/${file}`);
 		if (!command?.default || !command?.default?.data?.name) return;
+		console.log(command);
 		client.commands.set(command.default.data.name, command.default);
 	});
 });

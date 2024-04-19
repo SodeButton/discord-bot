@@ -5,4 +5,9 @@ export default (client: Client) => {
 
   client.application?.commands.set(client.commands.map(v => v.data));
 
+  setInterval(() => {
+    client.user?.setActivity({
+      name: `${client.ws.ping}ms`
+    });
+  }, 10000);
 }

@@ -1,6 +1,6 @@
 import {Command} from "../../interfaces";
 
-export = {
+export default {
   data: {
     name: 'ping',
     description: 'Ping Pong!',
