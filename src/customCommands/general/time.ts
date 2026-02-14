@@ -1,5 +1,5 @@
-import {CustomCommand} from "../../interfaces";
-import {Message} from "discord.js";
+import { CustomCommand } from "../../interfaces";
+import { Message } from "discord.js";
 
 export default {
   data: {
@@ -8,6 +8,8 @@ export default {
   },
   execute(message: Message) {
     const date1 = new Date();
-    message.channel.send("test -- "+date1.toLocaleString());
+    if (message.channel.isSendable()) {
+      message.channel.send("test -- " + date1.toLocaleString());
+    }
   }
 } as CustomCommand;

@@ -1,5 +1,5 @@
-import {Command} from "../../interfaces";
-import {EmbedBuilder, MessageResolvable, SlashCommandBuilder} from "discord.js";
+import { Command } from "../../interfaces";
+import { EmbedBuilder, MessageResolvable, SlashCommandBuilder, ChatInputCommandInteraction } from "discord.js";
 import axios from "axios";
 import supportedLanguage from "../../supportedLanguage";
 import util from "util";
@@ -10,12 +10,12 @@ export default {
     .setName('compile').setDescription('メッセージIDからコードをコンパイルします。')
     .addStringOption(option => option.setName('language').setDescription('コンパイルする言語').setRequired(true))
     .addStringOption(option => option.setName('message_id').setDescription('コンパイルするメッセージのID').setRequired(true)),
-  async execute(interaction) {
+  async execute(interaction: ChatInputCommandInteraction) {
 
     const globalPattern = /```([\s\S]*?)\n([\s\S]*?)\n```/g;
     const localPattern = /```([\s\S]*?)\n([\s\S]*?)\n```/;
 
-    const codeId = interaction.options.data[1].value as string;
+    const codeId = interaction.options.getString('message_id');
     let codeMessage = '';
     await interaction.channel?.messages.fetch(codeId as MessageResolvable).then(message => {
       codeMessage = message.content;
@@ -65,7 +65,7 @@ export default {
       headers: postData.headers
     }).then(async (response1) => {
       let isCompleted = false;
-      while(!isCompleted) {
+      while (!isCompleted) {
         axios.get("https://api.paiza.io/runners/get_status", {
           params: {
             id: response1.data.id,
@@ -94,7 +94,7 @@ export default {
 
         if (response3.data['result'] === 'success') {
 
-          const stdout= '```\n' + response3.data.stdout + '\n```';
+          const stdout = '```\n' + response3.data.stdout + '\n```';
 
           const embed = new EmbedBuilder()
             .setColor(0x1e90ff)
@@ -102,7 +102,7 @@ export default {
             .setDescription(`Compiled by [api.paiza.io](https://paiza.io)\n[Compiled Data](${dataURL})`)
             .setTimestamp(new Date())
             .setThumbnail(supportedLanguage[sourceCode[1]].image)
-            .setFooter({ text: supportedLanguage[sourceCode[1]].version, iconURL: supportedLanguage[sourceCode[1]].image})
+            .setFooter({ text: supportedLanguage[sourceCode[1]].version, iconURL: supportedLanguage[sourceCode[1]].image })
             .setFields([
               {
                 name: 'Language',
@@ -134,7 +134,7 @@ export default {
               .setDescription(`Compiled by [api.paiza.io](https://paiza.io)\n[Compiled Data](${dataURL})`)
               .setTimestamp(new Date())
               .setThumbnail(supportedLanguage[sourceCode[1]].image)
-              .setFooter({ text: supportedLanguage[sourceCode[1]].version, iconURL: supportedLanguage[sourceCode[1]].image})
+              .setFooter({ text: supportedLanguage[sourceCode[1]].version, iconURL: supportedLanguage[sourceCode[1]].image })
               .setFields([
                 {
                   name: 'Language',

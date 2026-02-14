@@ -1,4 +1,4 @@
-import {Command} from "../../interfaces";
+import { Command } from "../../interfaces";
 
 export default {
   data: {

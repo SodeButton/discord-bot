@@ -26,7 +26,7 @@ fs.readdirSync(`${__dirname}/events`).forEach(file => {
 });
 
 // Setting commands
-fs.readdirSync( `${__dirname}/commands`).forEach(folder => {
+fs.readdirSync(`${__dirname}/commands`).forEach(folder => {
 	fs.readdirSync(`${__dirname}/commands/${folder}`).forEach(async file => {
 		const command = await import(`./commands/${folder}/${file}`);
 		if (!command?.default || !command?.default?.data?.name) return;

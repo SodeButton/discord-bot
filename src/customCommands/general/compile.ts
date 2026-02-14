@@ -1,5 +1,5 @@
-import {CustomCommand} from "../../interfaces";
-import {EmbedBuilder, Message} from "discord.js";
+import { CustomCommand } from "../../interfaces";
+import { EmbedBuilder, Message } from "discord.js";
 import axios from "axios";
 import util from "util";
 import supportedLanguage from "../../supportedLanguage";
@@ -17,14 +17,18 @@ export default {
 
     const text = message.content.match(globalPattern);
     if (text === null) {
-      message.channel.send('```Error: No code provided```');
+      if (message.channel.isSendable()) {
+        message.channel.send('```Error: No code provided```');
+      }
       return;
     }
 
     const sourceCode = text[0].match(localPattern);
 
     if (sourceCode === null) {
-      message.channel.send('```Error: No code provided```');
+      if (message.channel.isSendable()) {
+        message.channel.send('```Error: No code provided```');
+      }
       return;
     }
 
@@ -56,7 +60,7 @@ export default {
       headers: postData.headers
     }).then(async (response1) => {
       let isCompleted = false;
-      while(!isCompleted) {
+      while (!isCompleted) {
         axios.get("https://api.paiza.io/runners/get_status", {
           params: {
             id: response1.data.id,
@@ -85,7 +89,7 @@ export default {
 
         if (response3.data['result'] === 'success') {
 
-          const stdout= '```\n' + response3.data.stdout + '\n```';
+          const stdout = '```\n' + response3.data.stdout + '\n```';
 
           const embed = new EmbedBuilder()
             .setColor(0x1e90ff)
@@ -93,7 +97,7 @@ export default {
             .setDescription(`Compiled by [api.paiza.io](https://paiza.io)\n[Compiled Data](${dataURL})`)
             .setTimestamp(new Date())
             .setThumbnail(supportedLanguage[sourceCode[1]].image)
-            .setFooter({ text: supportedLanguage[sourceCode[1]].version, iconURL: supportedLanguage[sourceCode[1]].image})
+            .setFooter({ text: supportedLanguage[sourceCode[1]].version, iconURL: supportedLanguage[sourceCode[1]].image })
             .setFields([
               {
                 name: 'Language',
@@ -114,8 +118,9 @@ export default {
                 value: stdout,
               },
             ]);
-
-          await message.channel.send({ embeds: [embed] });
+          if (message.channel.isSendable()) {
+            await message.channel.send({ embeds: [embed] });
+          }
         } else {
           if (response3.data['build_result'] == 'failure' || response3.data['result'] == 'failure') {
             const stderr = '```\n' + response3.data['build_stderr'] + '\n```';
@@ -125,7 +130,7 @@ export default {
               .setDescription(`Compiled by [api.paiza.io](https://paiza.io)\n[Compiled Data](${dataURL})`)
               .setTimestamp(new Date())
               .setThumbnail(supportedLanguage[sourceCode[1]].image)
-              .setFooter({ text: supportedLanguage[sourceCode[1]].version, iconURL: supportedLanguage[sourceCode[1]].image})
+              .setFooter({ text: supportedLanguage[sourceCode[1]].version, iconURL: supportedLanguage[sourceCode[1]].image })
               .setFields([
                 {
                   name: 'Language',
@@ -136,9 +141,13 @@ export default {
                   value: stderr,
                 },
               ]);
-            await message.channel.send({ embeds: [embed] });
+            if (message.channel.isSendable()) {
+              await message.channel.send({ embeds: [embed] });
+            }
           } else {
-            await message.channel.send('Error.');
+            if (message.channel.isSendable()) {
+              await message.channel.send('Error.');
+            }
           }
         }
       });

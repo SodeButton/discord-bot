@@ -1,5 +1,5 @@
 import Client from '../client';
-import {CommandInteraction} from "discord.js";
+import { CommandInteraction } from "discord.js";
 
 export default (client: Client, interaction: CommandInteraction) => {
   if (!interaction.isCommand()) return;
@@ -10,7 +10,7 @@ export default (client: Client, interaction: CommandInteraction) => {
 
   try {
     command.execute(interaction).then();
-  } catch(e) {
+  } catch (e) {
     if (interaction.replied) {
       interaction.followUp({
         content: 'エラーが発生しました！',

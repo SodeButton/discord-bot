@@ -4,7 +4,7 @@ export default {
   data: new SlashCommandBuilder()
     .setName('help')
     .setDescription('ヘルプを表示します。'),
-  execute: async(interaction: CommandInteraction)=> {
+  execute: async (interaction: CommandInteraction) => {
     await interaction.reply({
       embeds: [
         {
